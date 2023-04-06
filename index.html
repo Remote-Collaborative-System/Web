@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>PeerConnection for HoloLens 2</title>
+    </head>
+    <body>
+        <div>
+            <div>
+                <button id="connserver">Connect Sig Server</button>
+                <button id="leave" disabled>Leave</button>
+            </div>
+            <table align="center">
+                <tr>
+                    <td>
+                        <h2>Local: </h2>
+                        <video id="localvideo" autoplay playsinline></video>
+                    </td>
+                    <td>
+                        <h2>Reomte: </h2>
+                        <video id="remotevideo" autoplay playsinline></video>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    <!-- 引入浏览器的 webrtc 的调用接口 -->
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <!-- 引入 jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 引入 SimplePeer -->
+    <script src="js/simplepeer.min.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/client.js"></script>
+    </body>
+</html>
