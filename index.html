@@ -1,22 +1,35 @@
 <html>
     <head>
         <title>PeerConnection for HoloLens 2</title>
+        <style type="text/css">
+            .video_1_back {
+            /*设置视频宽度和高度*/
+            width: 1200;
+            height: 900;
+        }
+        .video_2_back {
+            /*设置视频宽度和高度*/
+            width: 200;
+            height: 150;
+        }
+        </style>
     </head>
     <body>
         <div>
             <div>
                 <button id="connserver">Connect Sig Server</button>
                 <button id="leave" disabled>Leave</button>
+                <button id="mark">Mark</button>
             </div>
             <table align="center">
                 <tr>
                     <td>
                         <h2>Local: </h2>
-                        <video id="localvideo" autoplay playsinline></video>
+                        <video id="localvideo" class="video_2_back" autoplay playsinline></video>
                     </td>
                     <td>
                         <h2>Reomte: </h2>
-                        <video id="remotevideo" autoplay playsinline></video>
+                        <video id="remotevideo" class="video_1_back" autoplay playsinline></video>
                     </td>
                 </tr>
             </table>

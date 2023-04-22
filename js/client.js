@@ -5,6 +5,7 @@ var remoteVideo = document.querySelector('video#remotevideo');
 
 var btnConn = document.querySelector('button#connserver');
 var btnLeave = document.querySelector('button#leave');
+var btnMark= document.querySelector('button#mark');
 
 var localStream;
 
@@ -13,6 +14,13 @@ var remotePeerId = 'Hololens2'
 var pc = null;
 
 var timer = null
+
+var MessageType = {
+    Offer: 1,
+    Answer: 2,
+    IceCandidate: 3,
+    Position: 4
+}
 
 // 发送消息
 function sendMessage(data) {
@@ -34,7 +42,7 @@ function processSenderMessage(data) {
     // answer
     else if (data.type === 'answer') {
         var answer = {
-            MessageType: 2,
+            MessageType: MessageType.Answer,
             Data: data.sdp,
             IceDataSeparator: ''
         }
@@ -46,7 +54,7 @@ function processSenderMessage(data) {
         var sdpMLineIndex = data.candidate.sdpMLineIndex
         var sdpMid = data.candidate.sdpMid
         var iceCandidate = {
-            MessageType: 3,
+            MessageType: MessageType.IceCandidate,
             Data: content + '|' + sdpMLineIndex + '|' + sdpMid,
             IceDataSeparator: '|'
         }
@@ -99,7 +107,6 @@ function processReceiverMessage(data) {
             }
         }
         pc.signal(iceCandidate)
-
     } else {
         console.log('invalid message')
     }
@@ -207,17 +214,39 @@ function closePeerConnection() {
 
 // 点击 leave 按钮的响应事件
 function leave() {
+    btnConn.disabled = false;
+    btnLeave.disabled = true;
     closePeerConnection();
     closeLocalMedia();
 }
 
-
 btnConn.onclick = start;
 btnLeave.onclick = leave;
-localVideo.addEventListener("click", function (event) {
+//点击Mark按钮开始标记
+btnMark.addEventListener("click", function (event) {
+    // 发送-1给远程端，要求暂停画面
+    var position = {
+        MessageType: MessageType.Position,
+        Data: -1 + ',' + -1,
+        DataSeparator: ','
+    }
+    sendMessage(position)
+});
+//点击remoteVideo完成标记
+remoteVideo.addEventListener("click", function (event) {
     console.log("x坐标: " + event.clientX);
     console.log("y坐标: " + event.clientY);
-    let rect=localVideo.getBoundingClientRect();
+    let rect=remoteVideo.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
     console.log("相对于矩形的x坐标: " + (event.clientX - rect.left));
     console.log("相对于矩形的y坐标: " + (event.clientY - rect.top));
+
+    // 发送坐标数据给远程端
+    var position = {
+        MessageType: MessageType.Position,
+        Data: x + ',' + y,
+        DataSeparator: ','
+    }
+    sendMessage(position)
 });
