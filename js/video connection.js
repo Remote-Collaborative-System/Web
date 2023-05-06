@@ -1,11 +1,10 @@
 'use strict'
 
-var localVideo = document.querySelector('video#localvideo');
-var remoteVideo = document.querySelector('video#remotevideo');
+var localVideo = document.querySelector('video#local-video');
+var remoteVideo = document.querySelector('video#local-video');
 
 var btnConn = document.querySelector('button#connserver');
 var btnLeave = document.querySelector('button#leave');
-var btnMark= document.querySelector('button#mark');
 
 var localStream;
 
@@ -15,7 +14,7 @@ var pc = null;
 
 var timer = null
 
-var MessageType = {
+export var MessageType = {
     Offer: 1,
     Answer: 2,
     IceCandidate: 3,
@@ -23,7 +22,7 @@ var MessageType = {
 }
 
 // 发送消息
-function sendMessage(data) {
+export function sendMessage(data) {
     console.log('send p2p message', data);
     $.ajax({
         url: "http://127.0.0.1:3000/data/" + remotePeerId,
@@ -222,31 +221,3 @@ function leave() {
 
 btnConn.onclick = start;
 btnLeave.onclick = leave;
-//点击Mark按钮开始标记
-btnMark.addEventListener("click", function (event) {
-    // 发送-1给远程端，要求暂停画面
-    var position = {
-        MessageType: MessageType.Position,
-        Data: -1 + ',' + -1,
-        DataSeparator: ','
-    }
-    sendMessage(position)
-});
-//点击remoteVideo完成标记
-remoteVideo.addEventListener("click", function (event) {
-    console.log("x坐标: " + event.clientX);
-    console.log("y坐标: " + event.clientY);
-    let rect=remoteVideo.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    console.log("相对于矩形的x坐标: " + (event.clientX - rect.left));
-    console.log("相对于矩形的y坐标: " + (event.clientY - rect.top));
-
-    // 发送坐标数据给远程端
-    var position = {
-        MessageType: MessageType.Position,
-        Data: x + ',' + y,
-        DataSeparator: ','
-    }
-    sendMessage(position)
-});

@@ -1,39 +1,43 @@
 <html>
-    <head>
-        <title>PeerConnection for HoloLens 2</title>
-        <style type="text/css">
-            .video_1_back {
+
+<head>
+    <title>PeerConnection for HoloLens 2</title>
+    <style type="text/css">
+        .video_1_back {
             /*设置视频宽度和高度*/
             width: 1200;
             height: 900;
         }
+
         .video_2_back {
             /*设置视频宽度和高度*/
-            width: 200;
-            height: 150;
+            width: 2000;
+            height: 1500;
         }
-        </style>
-    </head>
-    <body>
+    </style>
+</head>
+
+<body>
+    <div>
         <div>
-            <div>
-                <button id="connserver">Connect Sig Server</button>
-                <button id="leave" disabled>Leave</button>
-                <button id="mark">Mark</button>
-            </div>
-            <table align="center">
-                <tr>
-                    <td>
-                        <h2>Local: </h2>
-                        <video id="localvideo" class="video_2_back" autoplay playsinline></video>
-                    </td>
-                    <td>
-                        <h2>Reomte: </h2>
-                        <video id="remotevideo" class="video_1_back" autoplay playsinline></video>
-                    </td>
-                </tr>
-            </table>
+            <button id="connserver">Connect Sig Server</button>
+            <button id="leave" disabled>Leave</button>
+            <button id="mark">Mark</button>
+            <button id="finish-mark">Finish Mark</button>
         </div>
+        <table align="center">
+            <tr>
+                <td>
+                    <h2>Local: </h2>
+                    <video id="local-video" class="video_2_back" autoplay playsinline></video>
+                </td>
+                <td>
+                    <h2>Reomte: </h2>
+                    <video id="remote-video" class="video_1_back" autoplay playsinline></video>
+                </td>
+            </tr>
+        </table>
+    </div>
     <!-- 引入浏览器的 webrtc 的调用接口 -->
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <!-- 引入 jquery -->
@@ -41,6 +45,8 @@
     <!-- 引入 SimplePeer -->
     <script src="js/simplepeer.min.js"></script>
     <!-- 引入自定义脚本 -->
-    <script src="js/client.js"></script>
-    </body>
+    <script type="module" src="js/video connection.js"></script>
+    <script type="module" src="js/mark.js"></script>
+</body>
+
 </html>
