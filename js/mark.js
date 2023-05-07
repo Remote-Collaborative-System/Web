@@ -8,7 +8,10 @@ var remoteVideo = document.querySelector('video#local-video');
 var btnMark = document.querySelector('button#mark');
 var btnFinishMark = document.querySelector('button#finish-mark');
 
+// 定义场景、相机、渲染器、控制器和模型对象
 let scene, camera, renderer, controls, model;
+
+
 var mouse = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
 
@@ -31,7 +34,7 @@ function init() {
   // 将 renderer 的 canvas 添加到 video 元素下，使其与 video 元素重叠
   remoteVideo.parentNode.insertBefore(renderer.domElement, remoteVideo.nextSibling);
 
-  // 添加 OrbitControls 以支持拖拽、滑动和滚轮调整
+    // 添加 OrbitControls 以支持拖拽、滑动和滚轮调整
   // OrbitControls 需要一个相机和一个 DOM 元素作为参数
   controls = new OrbitControls(camera, renderer.domElement);
   //是否开启右键拖拽
@@ -48,6 +51,7 @@ function init() {
   camera.position.y = -(remoteVideo.clientHeight / 2 - rect.top - remoteVideo.clientTop) / (remoteVideo.clientHeight / 2);
 
   // 将渲染器位置和远端视频位置重合
+  renderer.domElement.style.pointerEvents = "none";
   renderer.domElement.style.position = "absolute";
   renderer.domElement.style.top = rect.top + "px";
   renderer.domElement.style.left = rect.left + "px";
@@ -71,24 +75,6 @@ btnMark.addEventListener("click", function () {
   remoteVideo.addEventListener("click", onMouseClick);
 });
 
-//FinishMark按钮的点击事件
-btnFinishMark.addEventListener("click", function () {
-  if (!model) return;
-
-  //给remoteVideo移除点击事件
-  remoteVideo.removeEventListener("click", onMouseClick);
-
-  const position = model.position;
-  const rotation = model.rotation;
-  const scale = model.scale;
-
-  console.log(`
-      Position: x=${position.x.toFixed(2)}, y=${position.y.toFixed(2)}, z=${position.z.toFixed(2)}<br>
-      Rotation: x=${rotation.x.toFixed(2)}, y=${rotation.y.toFixed(2)}, z=${rotation.z.toFixed(2)}<br>
-      Scale: x=${scale.x.toFixed(2)}, y=${scale.y.toFixed(2)}, z=${scale.z.toFixed(2)}
-    `);
-});
-
 //remoteVideo的点击事件
 function onMouseClick(event) {
   // 获取屏幕点击信息
@@ -108,35 +94,38 @@ function onMouseClick(event) {
   }
   sendMessage(position)
 
-  // 添加模型
+  //阻止默认的鼠标点击事件
   event.preventDefault();
 
-  mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-  mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  let intersects = raycaster.intersectObjects(scene.children, true);
-
-  if (model) {
-    scene.remove(model);
-  }
+  //开启renderer.domElement点击事件
+  renderer.domElement.style.pointerEvents = "auto";
 
   // 添加 GLTFLoader 以加载模型
   const gltfLoader = new GLTFLoader();
   gltfLoader.load("3d model/demo.gltf", function (gltf) {
     model = gltf.scene;
 
-    if (intersects.length > 0) {
-      model.position.copy(intersects[0].point);
-    }
-
     scene.add(model);
+    console.log("成功生成模型！");
+  }, undefined, function (error) {
+    console.error(error);
   });
 }
+
+//FinishMark按钮的点击事件
+btnFinishMark.addEventListener("click", function () {
+  // 遍历场景中的所有子对象
+  scene.remove(model); // 从场景中删除模型对象
+  model = null; // 将模型对象赋值为 null，释放内存
+
+  //给remoteVideo移除点击事件
+  remoteVideo.removeEventListener("click", onMouseClick);
+  //关闭renderer.domElement点击事件
+  renderer.domElement.style.pointerEvents = "none";
+});
 
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 }
-
