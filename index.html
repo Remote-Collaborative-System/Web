@@ -26,16 +26,14 @@
             <button id="finish-mark">Finish Mark</button>
         </div>
         <table align="center">
-            <tr>
-                <td>
-                    <h2>Local: </h2>
-                    <video id="local-video" class="video_2_back" autoplay playsinline></video>
-                </td>
-                <td>
-                    <h2>Reomte: </h2>
-                    <video id="remote-video" class="video_1_back" autoplay playsinline></video>
-                </td>
-            </tr>
+            <div>
+                <h2>Local: </h2>
+                <video id="local-video" class="video_2_back" autoplay playsinline></video>
+            </div>
+            <div>
+                <h2>Reomte: </h2>
+                <video id="remote-video" class="video_1_back" autoplay playsinline></video>
+            </div>
         </table>
     </div>
     <!-- 引入浏览器的 webrtc 的调用接口 -->
@@ -47,6 +45,7 @@
     <!-- 引入自定义脚本 -->
     <script type="module" src="js/video connection.js"></script>
     <script type="module" src="js/mark.js"></script>
+    <script type="module" src="js/model manager.js"></script>
 </body>
 
 </html>
