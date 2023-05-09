@@ -1,7 +1,7 @@
 import { sendMessage, MessageType } from "./video connection.js";
-import { loadModel, removeModel } from "./model manager.js";
+import { loadModel, removeModel, getModelData } from "./model manager.js";
 
-var remoteVideo = document.querySelector('video#local-video');
+var remoteVideo = document.querySelector('video#remote-video');
 
 var btnMark = document.querySelector('button#mark');
 var btnFinishMark = document.querySelector('button#finish-mark');
@@ -9,7 +9,7 @@ var btnFinishMark = document.querySelector('button#finish-mark');
 //Mark按钮的点击事件
 btnMark.addEventListener("click", function () {
   // 发送-1给远程端，要求暂停画面
-  sendModelMessage([-1, -1]);
+  sendModelMessage(getModelData());
 
   //给remoteVideo添加点击事件
   remoteVideo.addEventListener("click", onMouseClick);
@@ -18,19 +18,12 @@ btnMark.addEventListener("click", function () {
 //remoteVideo的点击事件
 function onMouseClick(event) {
   // 获取屏幕点击信息
-  console.log("x坐标: " + event.clientX);
-  console.log("y坐标: " + event.clientY);
   let rect = remoteVideo.getBoundingClientRect();
   var x = event.clientX - rect.left;
   var y = event.clientY - rect.top;
-  console.log("相对于矩形的x坐标: " + (event.clientX - rect.left));
-  console.log("相对于矩形的y坐标: " + (event.clientY - rect.top));
-
-  // 发送坐标数据给远程端
-  sendModelMessage([x, y]);
 
   //加载模型
-  loadModel(event);
+  loadModel(event, [x, y]);
 }
 
 //FinishMark按钮的点击事件
@@ -39,18 +32,38 @@ btnFinishMark.addEventListener("click", function () {
   //给remoteVideo移除点击事件
   remoteVideo.removeEventListener("click", onMouseClick);
 
+  // 发送坐标数据给远程端
+  sendModelMessage(getModelData());
+
   //移除模型
   removeModel();
-
 });
 
-function sendModelMessage([x, y]) {
-  var position = {
-    MessageType: MessageType.Position,
-    Data: x + ',' + y,
-    DataSeparator: ','
+function sendModelMessage(modelData) {
+  var position = modelData.position;
+  var scale = modelData.scale;
+  var rotation = modelData.rotation;
+
+  var message = {
+    MessageType: MessageType.Model,
+    Data: {
+      position: {
+        x: position.x,
+        y: position.y
+      },
+      scale: {
+        x: scale.x,
+        y: scale.y,
+        z: scale.z
+      },
+      rotation: {
+        x: rotation.x,
+        y: rotation.y,
+        z: rotation.z
+      }
+    }
   };
-  sendMessage(position);
+  sendMessage(message);
 }
 
 

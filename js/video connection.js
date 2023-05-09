@@ -1,7 +1,9 @@
 'use strict'
+import { init } from "./model manager.js";
+
 
 var localVideo = document.querySelector('video#local-video');
-var remoteVideo = document.querySelector('video#local-video');
+var remoteVideo = document.querySelector('video#remote-video');
 
 var btnConn = document.querySelector('button#connserver');
 var btnLeave = document.querySelector('button#leave');
@@ -18,12 +20,12 @@ export var MessageType = {
     Offer: 1,
     Answer: 2,
     IceCandidate: 3,
-    Position: 4
+    Model: 4
 }
 
 // 发送消息
 export function sendMessage(data) {
-    console.log('send p2p message', data);
+    console.log('send p2p message', JSON.stringify(data));
     $.ajax({
         url: "http://127.0.0.1:3000/data/" + remotePeerId,
         type: "POST",
@@ -187,6 +189,9 @@ function start() {
 
                 // 开始向信令服务器轮询消息
                 timer = setInterval(getMessage, 500)
+
+                // 初始化 Three.js 场景
+                init();
             })
             .catch(err => console.error('Failed to get Media Stream!', err));
     }
