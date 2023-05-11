@@ -1,5 +1,4 @@
 'use strict'
-import { init } from "./model manager.js";
 
 
 var localVideo = document.querySelector('video#local-video');
@@ -189,9 +188,6 @@ function start() {
 
                 // 开始向信令服务器轮询消息
                 timer = setInterval(getMessage, 500)
-
-                // 初始化 Three.js 场景
-                init();
             })
             .catch(err => console.error('Failed to get Media Stream!', err));
     }

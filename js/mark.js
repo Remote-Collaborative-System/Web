@@ -1,45 +1,88 @@
 import { sendMessage, MessageType } from "./video connection.js";
-import { loadModel, removeModel, getModelData } from "./model manager.js";
-
-var remoteVideo = document.querySelector('video#remote-video');
+import { init, modelCanvas } from "./marking manager.js";
+import { initMarking, loadModel, removeModel, getModelData } from "./marking manager.js";
+import { initDrawing, closeDrawing } from "./marking manager.js";
 
 var btnMark = document.querySelector('button#mark');
 var btnFinishMark = document.querySelector('button#finish-mark');
+var btnDraw = document.querySelector('button#draw');
+var btnFinishDraw = document.querySelector('button#finish-draw');
+
+// 确认是否开始mark和draw
+export let isMark = false;
+export let isDraw = false;
 
 //Mark按钮的点击事件
 btnMark.addEventListener("click", function () {
+  isMark = true;
+  isDraw = false;
+
+  initMarking();
+
   // 发送-1给远程端，要求暂停画面
-  sendModelMessage(getModelData());
-
-  //给remoteVideo添加点击事件
-  remoteVideo.addEventListener("click", onMouseClick);
+  sendMarkingMessage(getModelData());
 });
-
-//remoteVideo的点击事件
-function onMouseClick(event) {
-  // 获取屏幕点击信息
-  let rect = remoteVideo.getBoundingClientRect();
-  var x = event.clientX - rect.left;
-  var y = event.clientY - rect.top;
-
-  //加载模型
-  loadModel(event, [x, y]);
-}
 
 //FinishMark按钮的点击事件
 btnFinishMark.addEventListener("click", function () {
-
-  //给remoteVideo移除点击事件
-  remoteVideo.removeEventListener("click", onMouseClick);
+  isMark = false;
 
   // 发送坐标数据给远程端
-  sendModelMessage(getModelData());
+  sendMarkingMessage(getModelData());
 
   //移除模型
   removeModel();
 });
 
-function sendModelMessage(modelData) {
+//Draw按钮的点击事件
+btnDraw.addEventListener("click", function () {
+  console.log("click Draw")
+
+  isDraw = true;
+  isMark = false;
+
+  //初始化Drawing的控制事件
+  initDrawing();
+  // 发送-1给远程端，要求暂停画面
+  //sendMarkingMessage(getModelData());
+});
+
+//FinishDraw按钮的点击事件
+btnFinishDraw.addEventListener("click", function () {
+  isDraw = false;
+
+  //关闭Drawing的控制事件
+  closeDrawing();
+  // 发送坐标数据给远程端
+  //sendMarkingMessage(getModelData());
+
+});
+
+document.body.addEventListener('click', function (event) {
+  if (event.target.id === 'connserver') {
+    // 初始化 Three.js 场景,同时加载 mark 所需的 Canvas
+    init();
+    // 在这里处理 canvas 的点击事件
+    modelCanvas.addEventListener("click", function (event) {
+      if (isMark) {
+        // 获取屏幕点击信息
+        let rect = modelCanvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+
+        //加载模型
+        loadModel(event, [x, y]);
+      }
+      if (isDraw) {
+
+      }
+
+    });
+  }
+});
+
+
+function sendMarkingMessage(modelData) {
   var position = modelData.position;
   var scale = modelData.scale;
   var rotation = modelData.rotation;
