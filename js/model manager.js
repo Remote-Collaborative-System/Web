@@ -1,19 +1,18 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.module.js";
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/controls/TransformControls.js';
-import { isMark, isDraw } from "./mark.js"
+import { isMark } from "./mark.js"
+import { localVideo } from "./video connection.js";
+import { drawCanvas } from "./drawing manager.js";
 
-export var remoteVideo = document.querySelector('video#local-video');
+var remoteVideo = localVideo
 
 // 定义场景、相机、渲染器、模型控制器、模型对象、动画和时间
 let scene, camera, renderer, controls, model, mixer, clock;
 
-// 定义画笔和控制绘画的布尔量
-let brush, drawing;
+export var modelCanvas;
 
-export var modelCanvas, drawCanvas;
-
-export function init() {
+export function initModelCanvas() {
     // 创建一个新的 Three.js 场景
     scene = new THREE.Scene();
 
@@ -39,25 +38,13 @@ export function init() {
     remoteVideo.parentNode.insertBefore(modelCanvas, remoteVideo.nextSibling);
     // 设置渲染器的大小为 video 元素的大小
     renderer.setSize(remoteVideo.clientWidth, remoteVideo.clientHeight);
-    modelCanvas.id="model-canvas";
+    modelCanvas.id = "model-canvas";
     // 将渲染器位置和远端视频位置重合
     // 获取 remoteVideo 的位置信息
     let rect = remoteVideo.getBoundingClientRect();
     modelCanvas.style.position = "absolute";
     modelCanvas.style.top = rect.top + "px";
     modelCanvas.style.left = rect.left + "px";
-
-    // 创建用于 draw 的 canvas
-    drawCanvas = document.createElement('canvas');
-    drawCanvas.id="draw-canvas";
-    // 将 drawCanvas 添加到 video 元素下，使其与 video 元素重叠
-    remoteVideo.parentNode.insertBefore(drawCanvas, remoteVideo.nextSibling);
-    // 设置 drawCanvas 的大小为 video 元素的大小
-    drawCanvas.width = remoteVideo.clientWidth;
-    drawCanvas.height = remoteVideo.clientHeight;
-    drawCanvas.style.position = "absolute";
-    drawCanvas.style.top = rect.top + "px";
-    drawCanvas.style.left = rect.left + "px";
 
     clock = new THREE.Clock();
 
@@ -70,6 +57,8 @@ export function init() {
 export function initMarking() {
     drawCanvas.style.pointerEvents = 'none';
     modelCanvas.style.pointerEvents = 'auto';
+    modelCanvas.addEventListener("mouseenter", onMouseEvent);
+    modelCanvas.addEventListener("mouseleave", onMouseEvent);
 }
 
 export function loadModel(event, [x, y]) {
@@ -98,14 +87,14 @@ export function loadModel(event, [x, y]) {
         mixer.clipAction(clips[0]).play();
 
         // 创建 TransformControls 对象
-        controls = new TransformControls(camera, renderer.domElement);
+        controls = new TransformControls(camera, modelCanvas);
 
         // 为模型添加控制器
         controls.attach(model);
         controls.setMode('rotate');
-        renderer.domElement.addEventListener("mousedown", onMouseEvent);
-        renderer.domElement.addEventListener("wheel", onMouseEvent);
-        renderer.domElement.addEventListener("contextmenu", onMouseEvent);
+        modelCanvas.addEventListener("mousedown", onMouseEvent);
+        modelCanvas.addEventListener("wheel", onMouseEvent);
+        modelCanvas.addEventListener("contextmenu", onMouseEvent);
 
         // 将 controls 添加到场景中
         scene.add(controls);
@@ -202,11 +191,15 @@ function onMouseEvent(event) {
                 if (event.detail === 2) {
                     // 双击时切换回旋转模式
                     controls.setMode("rotate");
+                    //显示z轴
+                    controls.showZ = true;
                 } else {
                     switch (event.button) {
                         case 2: // 右键
                             // 切换到平移模式
                             controls.setMode("translate");
+                            //隐藏z轴
+                            controls.showZ = false;
                             break;
                         default:
                             break;
@@ -216,6 +209,8 @@ function onMouseEvent(event) {
             case "wheel":
                 // 切换到缩放模式
                 controls.setMode("scale");
+                //显示z轴
+                controls.showZ = true;
 
                 // 根据滚轮方向调整模型的缩放
                 const scaleFactor = 1.0 + (event.deltaY > 0 ? -0.1 : 0.1);
@@ -225,65 +220,17 @@ function onMouseEvent(event) {
             case "contextmenu":
                 event.preventDefault();
                 break;
+            case "mouseenter":
+                //更变鼠标样式
+                document.body.style.cursor = 'pointer';
+                break;
+            case "mouseleave":
+                //更变鼠标样式
+                document.body.style.cursor = 'default';
+                break;
             default:
                 break;
         }
     }
-    // console.log(isDraw);
-    // if (isDraw) {
-    //     console.log(event.type);
-    //     switch (event.type) {
-    //         case "click":
-    //             startDrawing();
-    //             break;
-    //         case "mousemove":
-    //             inDrawing();
-    //             break;
-    //         case "mouseup":
-    //             stopDrawing();
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
 }
 
-export function initDrawing() {
-    modelCanvas.style.pointerEvents = 'none';
-    drawCanvas.style.pointerEvents = 'auto';
-
-    // 画刷标记相关代码
-    brush = drawCanvas.getContext('2d');
-    console.log(drawCanvas)
-    console.log(brush)
-    // 设置画笔颜色和宽度
-    brush.strokeStyle = 'red';
-    brush.lineWidth = 50;
-
-    drawCanvas.addEventListener("mousedown", startDrawing);
-    drawCanvas.addEventListener("mousemove", inDrawing);
-    drawCanvas.addEventListener("mouseup", stopDrawing);
-}
-
-export function closeDrawing() {
-    drawCanvas.removeEventListener("mousedown", startDrawing);
-    drawCanvas.removeEventListener("mousemove", inDrawing);
-    drawCanvas.removeEventListener("mouseup", stopDrawing);
-}
-
-export function startDrawing(event) {
-    console.log("成功点击drawCanvas")
-    drawing = true;
-    brush.beginPath();
-    brush.moveTo(event.clientX - drawCanvas.offsetLeft, event.clientY - drawCanvas.offsetTop);
-}
-
-export function inDrawing(event) {
-    if (!drawing) return;
-    brush.lineTo(event.clientX - drawCanvas.offsetLeft, event.clientY - drawCanvas.offsetTop);
-    brush.stroke();
-}
-
-export function stopDrawing() {
-    drawing = false;
-}

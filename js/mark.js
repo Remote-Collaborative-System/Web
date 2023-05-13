@@ -1,7 +1,6 @@
 import { sendMessage, MessageType } from "./video connection.js";
-import { init, modelCanvas } from "./marking manager.js";
-import { initMarking, loadModel, removeModel, getModelData } from "./marking manager.js";
-import { initDrawing, closeDrawing } from "./marking manager.js";
+import { initModelCanvas, modelCanvas, initMarking, loadModel, removeModel, getModelData } from "./model manager.js";
+import { initDrawingCanvas, drawCanvas, initDrawing, closeDrawing } from "./drawing manager.js";
 
 var btnMark = document.querySelector('button#mark');
 var btnFinishMark = document.querySelector('button#finish-mark');
@@ -61,7 +60,8 @@ btnFinishDraw.addEventListener("click", function () {
 document.body.addEventListener('click', function (event) {
   if (event.target.id === 'connserver') {
     // 初始化 Three.js 场景,同时加载 mark 所需的 Canvas
-    init();
+    initDrawingCanvas();
+    initModelCanvas();
     // 在这里处理 canvas 的点击事件
     modelCanvas.addEventListener("click", function (event) {
       if (isMark) {
@@ -76,7 +76,6 @@ document.body.addEventListener('click', function (event) {
       if (isDraw) {
 
       }
-
     });
   }
 });

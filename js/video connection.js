@@ -1,7 +1,5 @@
 'use strict'
-
-
-var localVideo = document.querySelector('video#local-video');
+export var localVideo = document.querySelector('video#local-video');
 var remoteVideo = document.querySelector('video#remote-video');
 
 var btnConn = document.querySelector('button#connserver');
