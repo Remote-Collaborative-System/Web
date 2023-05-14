@@ -17,7 +17,8 @@ export var MessageType = {
     Offer: 1,
     Answer: 2,
     IceCandidate: 3,
-    Model: 4
+    Model: 4,
+    Draw: 5
 }
 
 // 发送消息

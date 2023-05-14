@@ -19,10 +19,10 @@ export function initModelCanvas() {
     // 添加全局环境光源
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
-    //// 添加定向光源
-    // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    // directionalLight.position.set(0, 1, 0);
-    // scene.add(directionalLight);
+    // 添加定向光源
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(0, 1, 0);
+    scene.add(directionalLight);
 
     // 创建一个透视摄像机，设置视角、纵横比、近剪切面和远剪切面
     camera = new THREE.PerspectiveCamera(75, remoteVideo.clientWidth / remoteVideo.clientHeight, 0.1, 1000);
@@ -68,18 +68,11 @@ export function loadModel(event, [x, y]) {
 
     // 添加 GLTFLoader 以加载模型
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load("3d model/demo.gltf", function (gltf) {
+    gltfLoader.load("3d model/twist.gltf", function (gltf) {
         model = gltf.scene;
 
         // 设置模型的位置
         model.position.copy(setModelPosition([x, y]));
-
-        // 添加材质
-        model.traverse((child) => {
-            if (child.isMesh) {
-                child.material = new THREE.MeshLambertMaterial();
-            }
-        });
 
         // 播放动画
         mixer = new THREE.AnimationMixer(model);
@@ -95,6 +88,7 @@ export function loadModel(event, [x, y]) {
         modelCanvas.addEventListener("mousedown", onMouseEvent);
         modelCanvas.addEventListener("wheel", onMouseEvent);
         modelCanvas.addEventListener("contextmenu", onMouseEvent);
+        modelCanvas.style.pointerEvents = 'none';
 
         // 将 controls 添加到场景中
         scene.add(controls);

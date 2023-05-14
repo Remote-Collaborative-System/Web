@@ -1,6 +1,6 @@
 import { sendMessage, MessageType } from "./video connection.js";
 import { initModelCanvas, modelCanvas, initMarking, loadModel, removeModel, getModelData } from "./model manager.js";
-import { initDrawingCanvas, drawCanvas, initDrawing, closeDrawing } from "./drawing manager.js";
+import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
 
 var btnMark = document.querySelector('button#mark');
 var btnFinishMark = document.querySelector('button#finish-mark');
@@ -15,8 +15,7 @@ export let isDraw = false;
 btnMark.addEventListener("click", function () {
   isMark = true;
   isDraw = false;
-
-  initMarking();
+  initMarking(isMark);
 
   // 发送-1给远程端，要求暂停画面
   sendMarkingMessage(getModelData());
@@ -36,25 +35,23 @@ btnFinishMark.addEventListener("click", function () {
 //Draw按钮的点击事件
 btnDraw.addEventListener("click", function () {
   console.log("click Draw")
-
-  isDraw = true;
-  isMark = false;
-
   //初始化Drawing的控制事件
   initDrawing();
+  isDraw = true;
+  isMark = false;
   // 发送-1给远程端，要求暂停画面
-  //sendMarkingMessage(getModelData());
+  sendDrawingMessage(getDrawingData(isDraw));
+
 });
 
 //FinishDraw按钮的点击事件
 btnFinishDraw.addEventListener("click", function () {
   isDraw = false;
+  // 发送坐标数据给远程端
+  sendDrawingMessage(getDrawingData(isDraw));
 
   //关闭Drawing的控制事件
   closeDrawing();
-  // 发送坐标数据给远程端
-  //sendMarkingMessage(getModelData());
-
 });
 
 document.body.addEventListener('click', function (event) {
@@ -71,7 +68,7 @@ document.body.addEventListener('click', function (event) {
         var y = event.clientY - rect.top;
 
         //加载模型
-        loadModel(event, [x, y]);
+        loadModel(event, [x, y],isMark);
       }
       if (isDraw) {
 
@@ -108,4 +105,13 @@ function sendMarkingMessage(modelData) {
   sendMessage(message);
 }
 
+function sendDrawingMessage(ImageData) {
+  var message = {
+    MessageType: MessageType.Draw,
+    Data: {
+      ImageData
+    }
+  };
+  sendMessage(message);
+}
 
