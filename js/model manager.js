@@ -4,13 +4,15 @@ import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/ex
 import { isMark } from "./mark.js"
 import { remoteVideo } from "./video connection.js";
 import { drawCanvas } from "./drawing manager.js";
+import { selectedColor } from "./color manager.js";
 
 // var remoteVideo = localVideo
 
-// 定义场景、相机、渲染器、模型控制器、模型对象、动画和时间
-let scene, camera, renderer, controls, model, mixer, clock;
+// 定义场景、相机、渲染器、模型控制器、动画和时间
+let scene, camera, renderer, controls, mixer, clock;
 
-export var modelCanvas;
+// 定义模型和模型所在的画布
+export var model, modelCanvas;
 
 export function initModelCanvas() {
     // 创建一个新的 Three.js 场景
@@ -73,6 +75,13 @@ export function loadModel(event, [x, y]) {
 
         // 设置模型的位置
         model.position.copy(setModelPosition([x, y]));
+
+        // 设置模型的颜色
+        model.traverse((o) => {
+            if (o.isMesh) {
+                o.material.color.setStyle(selectedColor);
+            }
+        });
 
         // 播放动画
         mixer = new THREE.AnimationMixer(model);
@@ -145,25 +154,34 @@ function setScreenPostion([modelX, modelY]) {
     return new THREE.Vector2(screenX, screenY);
 }
 
-export function getModelData() {
-    if (!model) {
-        console.log('No model loaded.');
+export function getModelData(isSend) {
+    if(isSend){
+        if (!model) {
+            console.log('No model loaded.');
+            return {
+                position: { x: -1, y: 0 },
+                scale: { x: 0, y: 0, z: 0 },
+                rotation: { x: 0, y: 0, z: 0 }
+            };
+        }
+    
+        const position = setScreenPostion([model.position.x, model.position.y]);
+        const scale = model.scale;
+        const rotation = model.rotation;
+    
         return {
-            position: { x: -1, y: 0 },
+            position: { x: position.x, y: position.y },
+            scale: { x: scale.x, y: scale.y, z: scale.z },
+            rotation: { x: rotation.x, y: rotation.y, z: rotation.z }
+        };
+    }
+    else{
+        return {
+            position: { x: 1, y: 0 },
             scale: { x: 0, y: 0, z: 0 },
             rotation: { x: 0, y: 0, z: 0 }
         };
     }
-
-    const position = setScreenPostion([model.position.x, model.position.y]);
-    const scale = model.scale;
-    const rotation = model.rotation;
-
-    return {
-        position: { x: position.x, y: position.y },
-        scale: { x: scale.x, y: scale.y, z: scale.z },
-        rotation: { x: rotation.x, y: rotation.y, z: rotation.z }
-    };
 }
 
 function animate() {

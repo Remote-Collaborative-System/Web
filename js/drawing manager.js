@@ -1,13 +1,12 @@
 import { remoteVideo } from "./video connection.js";
 import { modelCanvas } from "./model manager.js";
+import { selectedColor } from "./color manager.js";
 
 // var remoteVideo = localVideo
 
-// 定义画笔和控制绘画的布尔量
-let brush, drawing;
-
-export var drawCanvas;
-var previewCanvas, previewBrush;
+// 定义画笔和控制绘画的布尔量 以及画布
+export let brush, previewBrush, drawCanvas;
+var drawing, previewCanvas;
 
 export function initDrawingCanvas() {
     // 创建用于 draw 的 canvas
@@ -47,7 +46,7 @@ export function initDrawing() {
     console.log(drawCanvas)
     console.log(brush)
     // 设置画笔颜色和宽度
-    brush.strokeStyle = 'red';
+    brush.strokeStyle = selectedColor;
     brush.lineWidth = 8;
 
     // 设置线条端点和交叉点样式
@@ -56,8 +55,7 @@ export function initDrawing() {
 
     // 创建预览画笔
     previewBrush = previewCanvas.getContext('2d');
-    previewBrush.strokeStyle = brush.strokeStyle;
-    previewBrush.fillStyle = brush.strokeStyle;
+    previewBrush.fillStyle = selectedColor;
     previewBrush.lineWidth = brush.lineWidth;
 
     drawCanvas.addEventListener("mousedown", startDrawing);
@@ -71,8 +69,9 @@ export function closeDrawing() {
     drawCanvas.removeEventListener("mousedown", startDrawing);
     drawCanvas.removeEventListener("mousemove", inDrawing);
     drawCanvas.removeEventListener("mouseup", stopDrawing);
-    drawCanvas.addEventListener("wheel", adjustBrushSize);
+    drawCanvas.removeEventListener("wheel", adjustBrushSize);
     drawCanvas.removeEventListener("mousemove", showPreview);
+    brush.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
 }
 
 function startDrawing(event) {
@@ -99,7 +98,7 @@ function adjustBrushSize(event) {
     } else {
         brush.lineWidth = Math.max(brush.lineWidth - 1, 3);
     }
-    // 同时更新预览画笔的大小
+    // 同时更新预览画笔的大小和颜色
     previewBrush.lineWidth = brush.lineWidth;
     // 更新预览点的大小
     showPreview(event);
@@ -108,6 +107,7 @@ function adjustBrushSize(event) {
 }
 
 function showPreview(event) {
+
     // 清除之前的预览点
     previewBrush.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
 
@@ -117,13 +117,18 @@ function showPreview(event) {
     previewBrush.fill();
 }
 
-export function getDrawingData(isDraw){
-    if(!isDraw){
-        let dataUrl = drawCanvas.toDataURL('image/png', 1); // 第二个参数是质量，范围从0到1
-        return dataUrl;
+export function getDrawingData(isDraw, isSend) {
+    if (isSend) {
+        if (!isDraw) {
+            let dataUrl = drawCanvas.toDataURL('image/png', 1); // 第二个参数是质量，范围从0到1
+            return dataUrl;
+        }
+        else {
+            return '-1';
+        }
     }
-    else{
-        return '-1';
+    else {
+        return '1';
     }
 
 }

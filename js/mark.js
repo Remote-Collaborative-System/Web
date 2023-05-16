@@ -3,9 +3,11 @@ import { initModelCanvas, modelCanvas, initMarking, loadModel, removeModel, getM
 import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
 
 var btnMark = document.querySelector('button#mark');
-var btnFinishMark = document.querySelector('button#finish-mark');
 var btnDraw = document.querySelector('button#draw');
-var btnFinishDraw = document.querySelector('button#finish-draw');
+// var btnFinishMark = document.querySelector('button#finish-mark');
+// var btnFinishDraw = document.querySelector('button#finish-draw');
+var btnFinish = document.querySelector('button#finish');
+var btnCancel = document.querySelector('button#cancel');
 
 // 确认是否开始mark和draw
 export let isMark = false;
@@ -18,18 +20,7 @@ btnMark.addEventListener("click", function () {
   initMarking(isMark);
 
   // 发送-1给远程端，要求暂停画面
-  sendMarkingMessage(getModelData());
-});
-
-//FinishMark按钮的点击事件
-btnFinishMark.addEventListener("click", function () {
-  isMark = false;
-
-  // 发送坐标数据给远程端
-  sendMarkingMessage(getModelData());
-
-  //移除模型
-  removeModel();
+  sendMarkingMessage(getModelData(true));
 });
 
 //Draw按钮的点击事件
@@ -40,19 +31,71 @@ btnDraw.addEventListener("click", function () {
   isDraw = true;
   isMark = false;
   // 发送-1给远程端，要求暂停画面
-  sendDrawingMessage(getDrawingData(isDraw));
+  sendDrawingMessage(getDrawingData(isDraw,true));
 
 });
 
-//FinishDraw按钮的点击事件
-btnFinishDraw.addEventListener("click", function () {
-  isDraw = false;
-  // 发送坐标数据给远程端
-  sendDrawingMessage(getDrawingData(isDraw));
+//Finish按钮的点击事件
+btnFinish.addEventListener("click", function () {
+  if (isDraw) {
+    isDraw = false;
+    // 发送坐标数据给远程端
+    sendDrawingMessage(getDrawingData(isDraw,true));
 
-  //关闭Drawing的控制事件
-  closeDrawing();
-});
+    //关闭Drawing的控制事件
+    closeDrawing();
+  }
+  if(isMark) {
+    isMark = false;
+
+    // 发送坐标数据给远程端
+    sendMarkingMessage(getModelData(true));
+
+    //移除模型
+    removeModel();
+  }
+})
+
+//Cancel按钮的点击事件
+btnCancel.addEventListener("click",function(){
+  if (isDraw) {
+    isDraw = false;
+    // 发送坐标数据给远程端
+    sendDrawingMessage(getDrawingData(isDraw,false));
+
+    //关闭Drawing的控制事件
+    closeDrawing();
+  }
+  if(isMark) {
+    isMark = false;
+
+    // 发送坐标数据给远程端
+    sendMarkingMessage(getModelData(false));
+
+    //移除模型
+    removeModel();
+  }
+})
+// //FinishMark按钮的点击事件
+// btnFinishMark.addEventListener("click", function () {
+//   isMark = false;
+
+//   // 发送坐标数据给远程端
+//   sendMarkingMessage(getModelData());
+
+//   //移除模型
+//   removeModel();
+// });
+
+// //FinishDraw按钮的点击事件
+// btnFinishDraw.addEventListener("click", function () {
+//   isDraw = false;
+//   // 发送坐标数据给远程端
+//   sendDrawingMessage(getDrawingData(isDraw));
+
+//   //关闭Drawing的控制事件
+//   closeDrawing();
+// });
 
 document.body.addEventListener('click', function (event) {
   if (event.target.id === 'connserver') {
@@ -68,7 +111,7 @@ document.body.addEventListener('click', function (event) {
         var y = event.clientY - rect.top;
 
         //加载模型
-        loadModel(event, [x, y],isMark);
+        loadModel(event, [x, y], isMark);
       }
       if (isDraw) {
 
