@@ -2,10 +2,10 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.m
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/controls/TransformControls.js';
 import { isMark } from "./mark.js"
-import { localVideo } from "./video connection.js";
+import { remoteVideo } from "./video connection.js";
 import { drawCanvas } from "./drawing manager.js";
 
-var remoteVideo = localVideo
+// var remoteVideo = localVideo
 
 // 定义场景、相机、渲染器、模型控制器、模型对象、动画和时间
 let scene, camera, renderer, controls, model, mixer, clock;
@@ -88,7 +88,6 @@ export function loadModel(event, [x, y]) {
         modelCanvas.addEventListener("mousedown", onMouseEvent);
         modelCanvas.addEventListener("wheel", onMouseEvent);
         modelCanvas.addEventListener("contextmenu", onMouseEvent);
-        modelCanvas.style.pointerEvents = 'none';
 
         // 将 controls 添加到场景中
         scene.add(controls);

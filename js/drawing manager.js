@@ -1,7 +1,7 @@
-import { localVideo } from "./video connection.js";
+import { remoteVideo } from "./video connection.js";
 import { modelCanvas } from "./model manager.js";
 
-var remoteVideo = localVideo
+// var remoteVideo = localVideo
 
 // 定义画笔和控制绘画的布尔量
 let brush, drawing;
@@ -119,16 +119,11 @@ function showPreview(event) {
 
 export function getDrawingData(isDraw){
     if(!isDraw){
-        let dataUrl = drawCanvas.toDataURL('image/jpeg', 0.5); // 第二个参数是质量，范围从0到1
-        let serializableImageData = {
-            width: drawCanvas.width,
-            height: drawCanvas.height,
-            dataUrl: dataUrl
-        };
-        return serializableImageData;
+        let dataUrl = drawCanvas.toDataURL('image/png', 1); // 第二个参数是质量，范围从0到1
+        return dataUrl;
     }
     else{
-        return -1;
+        return '-1';
     }
 
 }

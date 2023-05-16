@@ -105,12 +105,10 @@ function sendMarkingMessage(modelData) {
   sendMessage(message);
 }
 
-function sendDrawingMessage(ImageData) {
+function sendDrawingMessage(imageData) {
   var message = {
     MessageType: MessageType.Draw,
-    Data: {
-      ImageData
-    }
+    Data: imageData
   };
   sendMessage(message);
 }
