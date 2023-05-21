@@ -1,9 +1,17 @@
 'use strict'
+
 var localVideo = document.querySelector('video#local-video');
 export var remoteVideo = document.querySelector('video#remote-video');
 
+// 通过ID获取现有的div元素
+var divElement = document.getElementById('remote-video-div');
+// 定义视频URL
+var videoUrl = 'https://192.168.3.65/api/holographic/stream/live_high.mp4?holo=true&pv=true&mic=true&loopback=true&RenderFromCamera=true';
+
+
 var btnConn = document.querySelector('button#connserver');
 var btnLeave = document.querySelector('button#leave');
+var btnRefresh = document.querySelector('button#refresh');
 
 var localStream;
 
@@ -25,7 +33,7 @@ export var MessageType = {
 export function sendMessage(data) {
     console.log('send p2p message', JSON.stringify(data));
     $.ajax({
-        url: "http://127.0.0.1:3000/data/" + remotePeerId,
+        url: "http://192.168.3.35:3000/data/" + remotePeerId,
         type: "POST",
         data: JSON.stringify(data),
         error: (err) => { console.log(err) }
@@ -67,7 +75,7 @@ function processSenderMessage(data) {
 // 不断向信令服务器轮询消息
 function getMessage() {
     $.ajax({
-        url: "http://127.0.0.1:3000/data/" + localPeerId,
+        url: "http://192.168.3.35:3000/data/" + localPeerId,
         type: "GET",
         success: (data) => {
             if (data) {
@@ -219,5 +227,38 @@ function leave() {
     closeLocalMedia();
 }
 
+export function refresh() {
+    // 检查视频元素是否存在
+    var videoElement = divElement.querySelector('video#remote-video');
+
+    // if (videoElement) {
+    //     // 如果视频元素存在，删除它
+    //     divElement.removeChild(videoElement);
+    // }
+    // 如果视频元素不存在，创建并添加新的视频元素
+    videoElement = document.createElement('video');
+    videoElement.id = "remote-video";
+    videoElement.width = 1440;
+    videoElement.height = 936;
+    videoElement.style.pointerEvents = 'none';
+    // 获取 remoteVideo 的位置信息
+    let rect = remoteVideo.getBoundingClientRect();
+    videoElement.style.position = "absolute";
+    // 设置 videoElement 的 CSS 样式
+    videoElement.style.zIndex = '-1'; // 将其设置为负数
+    videoElement.style.top = rect.top + "px";
+    videoElement.style.left = rect.left + "px";
+
+    var sourceElement = document.createElement('source');
+    sourceElement.src = videoUrl;
+    sourceElement.type = 'video/mp4';
+
+    videoElement.appendChild(sourceElement);
+    divElement.appendChild(videoElement);
+
+    videoElement.play();
+}
+
 btnConn.onclick = start;
 btnLeave.onclick = leave;
+btnRefresh.onclick = refresh;

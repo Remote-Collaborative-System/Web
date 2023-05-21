@@ -5,8 +5,8 @@
     <style type="text/css">
         .video_1_back {
             /*设置视频宽度和高度*/
-            width: 1200;
-            height: 900;
+            width: 1440;
+            height: 936;
         }
 
         .video_2_back {
@@ -27,18 +27,30 @@
         </div>
 
         <div>
-            <button id="color1" >1</button>
-            <button id="color2" >2</button>
-            <button id="color3" >3</button>
-            <button id="color4" >4</button>
+            <button id="color1">1</button>
+            <button id="color2">2</button>
+            <button id="color3">3</button>
+            <button id="color4">4</button>
             <button id="finish">Finish</button>
             <button id="cancel">Cancel</button>
         </div>
 
+        <div>
+            <button id="refresh">Refresh</button>
+
+        </div>
+
         <table align="center">
-            <div>
+
+            <div id="remote-video-div">
+                <!-- <video autoplay="" width="814" id="mrcLivePreviewPlayer">
+                    <source
+                        src="https://192.168.3.65/api/holographic/stream/live_high.mp4?holo=true&amp;pv=true&amp;mic=true&amp;loopback=true&amp;RenderFromCamera=true"
+                        type="video/mp4">
+                </video> -->
                 <h2>Reomte: </h2>
-                <video id="remote-video" class="video_1_back" autoplay playsinline></video>
+                <video id="remote-video" class="video_1_back" playsinline>
+                </video>
             </div>
             <div>
                 <h2>Local: </h2>

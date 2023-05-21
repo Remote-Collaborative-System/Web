@@ -33,20 +33,26 @@ export function initModelCanvas() {
     camera.lookAt(0, 0, -1);
     camera.position.z = 5;
 
+
     // 创建 WebGL 渲染器，启用 alpha（透明度）和抗锯齿
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    // 将 renderer 的 canvas 添加到 video 元素下，使其与 video 元素重叠
-    modelCanvas = renderer.domElement;
-    remoteVideo.parentNode.insertBefore(modelCanvas, remoteVideo.nextSibling);
-    // 设置渲染器的大小为 video 元素的大小
-    renderer.setSize(remoteVideo.clientWidth, remoteVideo.clientHeight);
-    modelCanvas.id = "model-canvas";
-    // 将渲染器位置和远端视频位置重合
-    // 获取 remoteVideo 的位置信息
-    let rect = remoteVideo.getBoundingClientRect();
-    modelCanvas.style.position = "absolute";
-    modelCanvas.style.top = rect.top + "px";
-    modelCanvas.style.left = rect.left + "px";
+    if (!modelCanvas) {
+        // 将 renderer 的 canvas 添加到 video 元素下，使其与 video 元素重叠
+        modelCanvas = renderer.domElement;
+        remoteVideo.parentNode.insertBefore(modelCanvas, remoteVideo.nextSibling);
+        // 设置渲染器的大小为 video 元素的大小
+        renderer.setSize(remoteVideo.clientWidth, remoteVideo.clientHeight);
+        modelCanvas.id = "model-canvas";
+        // 将渲染器位置和远端视频位置重合
+        // 获取 remoteVideo 的位置信息
+        let rect = remoteVideo.getBoundingClientRect();
+        modelCanvas.style.position = "absolute";
+        // 设置 videoElement 的 CSS 样式
+        modelCanvas.style.zIndex = '1'; // 将其设置为负数
+        modelCanvas.style.top = rect.top + "px";
+        modelCanvas.style.left = rect.left + "px";
+
+    }
 
     clock = new THREE.Clock();
 
@@ -70,7 +76,7 @@ export function loadModel(event, [x, y]) {
 
     // 添加 GLTFLoader 以加载模型
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load("3d model/twist.gltf", function (gltf) {
+    gltfLoader.load("3d model/demo.gltf", function (gltf) {
         model = gltf.scene;
 
         // 设置模型的位置
@@ -155,7 +161,7 @@ function setScreenPostion([modelX, modelY]) {
 }
 
 export function getModelData(isSend) {
-    if(isSend){
+    if (isSend) {
         if (!model) {
             console.log('No model loaded.');
             return {
@@ -164,18 +170,18 @@ export function getModelData(isSend) {
                 rotation: { x: 0, y: 0, z: 0 }
             };
         }
-    
+
         const position = setScreenPostion([model.position.x, model.position.y]);
         const scale = model.scale;
         const rotation = model.rotation;
-    
+
         return {
             position: { x: position.x, y: position.y },
             scale: { x: scale.x, y: scale.y, z: scale.z },
             rotation: { x: rotation.x, y: rotation.y, z: rotation.z }
         };
     }
-    else{
+    else {
         return {
             position: { x: 1, y: 0 },
             scale: { x: 0, y: 0, z: 0 },

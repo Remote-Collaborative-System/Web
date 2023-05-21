@@ -6,23 +6,26 @@ import { selectedColor } from "./color manager.js";
 
 // 定义画笔和控制绘画的布尔量 以及画布
 export let brush, previewBrush, drawCanvas;
-var drawing, previewCanvas;
+let drawing, previewCanvas, rect;
 
 export function initDrawingCanvas() {
     // 创建用于 draw 的 canvas
-    drawCanvas = document.createElement('canvas');
-    drawCanvas.id = "draw-canvas";
-    // 将 drawCanvas 添加到 video 元素下，使其与 video 元素重叠
-    remoteVideo.parentNode.insertBefore(drawCanvas, remoteVideo.nextSibling);
-    // 设置 drawCanvas 的大小为 video 元素的大小
-    drawCanvas.width = remoteVideo.clientWidth;
-    drawCanvas.height = remoteVideo.clientHeight;
-    let rect = remoteVideo.getBoundingClientRect();
-    drawCanvas.style.position = "absolute";
-    drawCanvas.style.top = rect.top + "px";
-    drawCanvas.style.left = rect.left + "px";
-    drawCanvas.style.pointerEvents = 'none';
+    if(!drawCanvas){
+        drawCanvas = document.createElement('canvas');
+        drawCanvas.id = "draw-canvas";
+        // 将 drawCanvas 添加到 video 元素下，使其与 video 元素重叠
+        remoteVideo.parentNode.insertBefore(drawCanvas, remoteVideo.nextSibling);
+        // 设置 drawCanvas 的大小为 video 元素的大小
+        drawCanvas.width = remoteVideo.clientWidth;
+        drawCanvas.height = remoteVideo.clientHeight;
+        rect = remoteVideo.getBoundingClientRect();
+        drawCanvas.style.position = "absolute";
+        drawCanvas.style.top = rect.top + "px";
+        drawCanvas.style.left = rect.left + "px";
+        drawCanvas.style.pointerEvents = 'none';
+    }
 
+    if(!previewCanvas){
     // 创建用于预览的 canvas
     previewCanvas = document.createElement('canvas');
     previewCanvas.id = "preview-canvas";
@@ -35,6 +38,8 @@ export function initDrawingCanvas() {
     previewCanvas.style.top = rect.top + "px";
     previewCanvas.style.left = rect.left + "px";
     previewCanvas.style.pointerEvents = 'none';
+    }
+
 }
 
 export function initDrawing() {
