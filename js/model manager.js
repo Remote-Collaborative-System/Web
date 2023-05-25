@@ -51,7 +51,6 @@ export function initModelCanvas() {
         modelCanvas.style.zIndex = '1'; // 将其设置为负数
         modelCanvas.style.top = rect.top + "px";
         modelCanvas.style.left = rect.left + "px";
-
     }
 
     clock = new THREE.Clock();
@@ -76,7 +75,7 @@ export function loadModel(event, [x, y]) {
 
     // 添加 GLTFLoader 以加载模型
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load("3d model/demo.gltf", function (gltf) {
+    gltfLoader.load("3d model/顺时针.gltf", function (gltf) {
         model = gltf.scene;
 
         // 设置模型的位置
