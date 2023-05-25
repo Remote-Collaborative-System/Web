@@ -2,12 +2,12 @@ import { sendMessage, MessageType } from "./video connection.js";
 import { initModelCanvas, modelCanvas, initMarking, loadModel, removeModel, getModelData } from "./model manager.js";
 import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
 
-var btnMark = document.querySelector('mark');
-var btnDraw = document.querySelector('draw');
+var btnMark = document.getElementById('mark');
+var btnDraw = document.getElementById('draw');
 // var btnFinishMark = document.querySelector('button#finish-mark');
 // var btnFinishDraw = document.querySelector('button#finish-draw');
-var btnFinish = document.querySelector('finish');
-var btnCancel = document.querySelector('cancel');
+var btnFinish = document.getElementById('finish');
+var btnCancel = document.getElementById('cancel');
 
 // 确认是否开始mark和draw
 export let isMark = false;

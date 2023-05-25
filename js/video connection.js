@@ -1,9 +1,9 @@
 'use strict'
-var localVideo = document.querySelector('video#local-video');
-export var remoteVideo = document.querySelector('video#remote-video');
+var localVideo = document.querySelector('local-video');
+export var remoteVideo = document.querySelector('remote-video');
 
-var btnConn = document.querySelector('connserver');
-var btnLeave = document.querySelector('leave');
+var btnConn = document.getElementById('connserver');
+var btnLeave = document.getElementById('leave');
 
 var localStream;
 
@@ -25,7 +25,7 @@ export var MessageType = {
 export function sendMessage(data) {
     console.log('send p2p message', JSON.stringify(data));
     $.ajax({
-        url: "http://192.168.1.109:3000/data/" + remotePeerId,
+        url: "http://127.0.0.1:3000/data/" + remotePeerId,
         type: "POST",
         data: JSON.stringify(data),
         error: (err) => { console.log(err) }
@@ -67,7 +67,7 @@ function processSenderMessage(data) {
 // 不断向信令服务器轮询消息
 function getMessage() {
     $.ajax({
-        url: "http://192.168.1.109:3000/data/" + localPeerId,
+        url: "http://127.0.0.1:3000/data/" + localPeerId,
         type: "GET",
         success: (data) => {
             if (data) {
