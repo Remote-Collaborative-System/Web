@@ -1,7 +1,7 @@
 'use strict'
 
-var localVideo = document.querySelector('video#local-video');
-export var remoteVideo = document.querySelector('video#remote-video');
+var localVideo = document.getElementById('local-video');
+export var remoteVideo = document.getElementById('remote-video');
 
 // 通过ID获取现有的div元素
 var divElement = document.getElementById('remote-video-div');
@@ -9,9 +9,9 @@ var divElement = document.getElementById('remote-video-div');
 var videoUrl = 'https://192.168.3.65/api/holographic/stream/live_high.mp4?holo=true&pv=true&mic=true&loopback=true&RenderFromCamera=true';
 
 
-var btnConn = document.querySelector('button#connserver');
-var btnLeave = document.querySelector('button#leave');
-var btnRefresh = document.querySelector('button#refresh');
+var btnConn = document.getElementById('connserver');
+var btnLeave = document.getElementById('leave');
+var btnRefresh = document.getElementById('refresh');
 
 var localStream;
 
@@ -173,7 +173,7 @@ function start() {
 
     // // 开始向信令服务器轮询消息
     // timer = setInterval(getMessage, 500)
-
+    // 检查视频元素是否存在
     //获取本地音视频流
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('the getUserMedia is not supported!');
@@ -198,6 +198,7 @@ function start() {
             })
             .catch(err => console.error('Failed to get Media Stream!', err));
     }
+    
 }
 
 // 关闭本地媒体流
@@ -230,11 +231,10 @@ function leave() {
 export function refresh() {
     // 检查视频元素是否存在
     var videoElement = divElement.querySelector('video#remote-video');
-
-    // if (videoElement) {
-    //     // 如果视频元素存在，删除它
-    //     divElement.removeChild(videoElement);
-    // }
+    if (videoElement) {
+        // 如果视频元素存在，删除它
+        divElement.removeChild(videoElement);
+    }
     // 如果视频元素不存在，创建并添加新的视频元素
     videoElement = document.createElement('video');
     videoElement.id = "remote-video";
@@ -248,6 +248,7 @@ export function refresh() {
     videoElement.style.zIndex = '-1'; // 将其设置为负数
     videoElement.style.top = rect.top + "px";
     videoElement.style.left = rect.left + "px";
+    videoElement.autoplay = "";
 
     var sourceElement = document.createElement('source');
     sourceElement.src = videoUrl;
@@ -261,4 +262,4 @@ export function refresh() {
 
 btnConn.onclick = start;
 btnLeave.onclick = leave;
-btnRefresh.onclick = refresh;
+// btnRefresh.onclick = refresh;
