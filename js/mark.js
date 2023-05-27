@@ -1,4 +1,4 @@
-import { sendMessage, MessageType, refresh } from "./video connection.js";
+import { sendMessage, MessageType } from "./video connection.js";
 import {selectedColor} from "./color manager.js"
 import { initModelCanvas, modelCanvas, initMarking, loadModel,refreshModel, removeModel, getModelData } from "./model manager.js";
 import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
