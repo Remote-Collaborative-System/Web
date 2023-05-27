@@ -1,4 +1,4 @@
-import { remoteVideo } from "./video connection.js";
+import { divElement, remoteVideo } from "./video connection.js";
 import { modelCanvas } from "./model manager.js";
 import { selectedColor } from "./color manager.js";
 
@@ -14,14 +14,16 @@ export function initDrawingCanvas() {
         drawCanvas = document.createElement('canvas');
         drawCanvas.id = "draw-canvas";
         // 将 drawCanvas 添加到 video 元素下，使其与 video 元素重叠
-        remoteVideo.parentNode.insertBefore(drawCanvas, remoteVideo.nextSibling);
+        divElement.appendChild(drawCanvas);
         // 设置 drawCanvas 的大小为 video 元素的大小
-        drawCanvas.width = remoteVideo.clientWidth;
-        drawCanvas.height = remoteVideo.clientHeight;
         rect = remoteVideo.getBoundingClientRect();
+        drawCanvas.width = rect.width;
+        drawCanvas.height = rect.height;
+// 获取 remoteVideo 的位置信息,并于之重合
         drawCanvas.style.position = "absolute";
-        drawCanvas.style.top = rect.top + "px";
-        drawCanvas.style.left = rect.left + "px";
+        drawCanvas.style.zIndex = '1'; 
+        drawCanvas.style.top = '0';
+        drawCanvas.style.left = '0';
         drawCanvas.style.pointerEvents = 'none';
     }
 
@@ -30,13 +32,16 @@ export function initDrawingCanvas() {
     previewCanvas = document.createElement('canvas');
     previewCanvas.id = "preview-canvas";
     // 将 previewCanvas 添加到 drawCanvas 元素下，使其与 drawCanvas 元素重叠
-    drawCanvas.parentNode.insertBefore(previewCanvas, drawCanvas.nextSibling);
+    divElement.appendChild(previewCanvas);
     // 设置 previewCanvas 的大小为 drawCanvas 元素的大小
-    previewCanvas.width = drawCanvas.clientWidth;
-    previewCanvas.height = drawCanvas.clientHeight;
+    rect = remoteVideo.getBoundingClientRect();
+    previewCanvas.width = rect.width;
+    previewCanvas.height = rect.height;
+    // 获取 remoteVideo 的位置信息,并于之重合
     previewCanvas.style.position = "absolute";
-    previewCanvas.style.top = rect.top + "px";
-    previewCanvas.style.left = rect.left + "px";
+    previewCanvas.style.zIndex = '1'; 
+    previewCanvas.style.top = '0';
+    previewCanvas.style.left = '0';
     previewCanvas.style.pointerEvents = 'none';
     }
 

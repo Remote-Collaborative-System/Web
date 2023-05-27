@@ -4,7 +4,7 @@ var localVideo = document.getElementById('local-video');
 export var remoteVideo = document.getElementById('remote-video');
 
 // 通过ID获取现有的div元素
-var divElement = document.getElementById('remote-video-div');
+export var divElement = document.getElementById('remote-video-div');
 // 定义视频URL
 var videoUrl = 'https://192.168.3.65/api/holographic/stream/live_high.mp4?holo=true&pv=true&mic=true&loopback=true&RenderFromCamera=true';
 
@@ -262,4 +262,5 @@ export function refresh() {
 
 btnConn.onclick = start;
 btnLeave.onclick = leave;
+start();
 // btnRefresh.onclick = refresh;

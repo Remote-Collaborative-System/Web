@@ -2,7 +2,7 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.m
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/controls/TransformControls.js';
 import { isMark } from "./mark.js"
-import { remoteVideo } from "./video connection.js";
+import { divElement,remoteVideo } from "./video connection.js";
 import { drawCanvas } from "./drawing manager.js";
 import { selectedColor } from "./color manager.js";
 
@@ -39,18 +39,18 @@ export function initModelCanvas() {
     if (!modelCanvas) {
         // 将 renderer 的 canvas 添加到 video 元素下，使其与 video 元素重叠
         modelCanvas = renderer.domElement;
-        remoteVideo.parentNode.insertBefore(modelCanvas, remoteVideo.nextSibling);
+        divElement.appendChild(modelCanvas);
         // 设置渲染器的大小为 video 元素的大小
-        renderer.setSize(remoteVideo.clientWidth, remoteVideo.clientHeight);
+        let rect = remoteVideo.getBoundingClientRect();
+        renderer.setSize(rect.width, rect.height);
         modelCanvas.id = "model-canvas";
         // 将渲染器位置和远端视频位置重合
         // 获取 remoteVideo 的位置信息
-        let rect = remoteVideo.getBoundingClientRect();
         modelCanvas.style.position = "absolute";
         // 设置 videoElement 的 CSS 样式
-        modelCanvas.style.zIndex = '1'; // 将其设置为负数
-        modelCanvas.style.top = rect.top + "px";
-        modelCanvas.style.left = rect.left + "px";
+        modelCanvas.style.zIndex = '1'; 
+        modelCanvas.style.top = '0';
+        modelCanvas.style.left = '0';
     }
 
     clock = new THREE.Clock();
