@@ -9,7 +9,7 @@ import { selectedColor } from "./color manager.js";
 // var remoteVideo = localVideo
 
 // 定义场景、相机、渲染器、模型控制器、动画和时间
-let scene, camera, renderer, controls, mixer, clock;
+let scene, camera, renderer, controls, mixer, clock,cameraFov=60;
 
 
 // 定义模型和模型所在的画布
@@ -28,12 +28,11 @@ export function initModelCanvas() {
     scene.add(directionalLight);
 
     // 创建一个透视摄像机，设置视角、纵横比、近剪切面和远剪切面
-    camera = new THREE.PerspectiveCamera(75, remoteVideo.clientWidth / remoteVideo.clientHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(cameraFov, remoteVideo.clientWidth / remoteVideo.clientHeight, 0.1, 1000);
     // 设置相机位置
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, -1);
     camera.position.z = 5;
-
 
     // 创建 WebGL 渲染器，启用 alpha（透明度）和抗锯齿
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -83,7 +82,7 @@ export function loadModel(event, [x, y], modelType) {
         model.position.copy(setModelPosition([x, y]));
 
         // 设置模型的大小
-        model.scale.set(0.02, 0.02, 0.02);
+        model.scale.set(0.005, 0.005, 0.005);
         model.rotation.set(Math.PI / 2, 0, 0);
 
         // 设置模型的颜色
@@ -184,7 +183,6 @@ function setModelPosition([screenX, screenY]) {
     var normalizedY = -(screenY / remoteVideo.clientHeight) * 2 + 1;
 
     // 计算摄像机空间中的 x 和 y 坐标
-    var cameraFov = 75;
     var cameraHeight = 2 * Math.tan((cameraFov / 2) * (Math.PI / 180)) * camera.position.z;
     var cameraWidth = cameraHeight * (remoteVideo.clientWidth / remoteVideo.clientHeight);
 
@@ -197,7 +195,6 @@ function setModelPosition([screenX, screenY]) {
 // 将模型坐标转换为摄像机空间中的坐标
 function setScreenPostion([modelX, modelY]) {
     // 计算摄像机空间中的归一化 x 和 y 坐标
-    var cameraFov = 75;
     var cameraHeight = 2 * Math.tan((cameraFov / 2) * (Math.PI / 180)) * camera.position.z;
     var cameraWidth = cameraHeight * (remoteVideo.clientWidth / remoteVideo.clientHeight);
 

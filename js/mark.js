@@ -1,4 +1,5 @@
 import { sendMessage, MessageType, refresh } from "./video connection.js";
+import {selectedColor} from "./color manager.js"
 import { initModelCanvas, modelCanvas, initMarking, loadModel,refreshModel, removeModel, getModelData } from "./model manager.js";
 import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
 
@@ -21,30 +22,40 @@ document.getElementById('mark1').addEventListener('click', function() {
   isMark = true;
   modelTypeIndex=0
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+    // 发送-1给远程端，要求暂停画面
+    sendMarkingMessage(getModelData(true));
 });
 
 document.getElementById('mark2').addEventListener('click', function() {
   isMark = true;
   modelTypeIndex=1;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+    // 发送-1给远程端，要求暂停画面
+    sendMarkingMessage(getModelData(true));
 });
 
 document.getElementById('mark3').addEventListener('click', function() {
   isMark = true;
   modelTypeIndex=3;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+    // 发送-1给远程端，要求暂停画面
+    sendMarkingMessage(getModelData(true));
 });
 
 document.getElementById('mark4').addEventListener('click', function() {
   isMark = true;
   modelTypeIndex=5;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+    // 发送-1给远程端，要求暂停画面
+    sendMarkingMessage(getModelData(true));
 });
 
 document.getElementById('mark5').addEventListener('click', function() {
   isMark = true;
   modelTypeIndex=7;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+    // 发送-1给远程端，要求暂停画面
+    sendMarkingMessage(getModelData(true));
 });
 
 document.getElementById('transform1').addEventListener('click', function() {
@@ -85,6 +96,7 @@ btnMark.addEventListener("click", function () {
   modelTypeIndex=0;
   // 发送-1给远程端，要求暂停画面
   sendMarkingMessage(getModelData(true));
+
 });
 
 //Draw按钮的点击事件
@@ -179,6 +191,7 @@ function sendMarkingMessage(modelData) {
     MessageType: MessageType.Model,
     Data: {
       type:modelTypeIndex,
+      color:selectedColor,
       position: {
         x: position.x + amend_x,
         y: position.y + amend_y
@@ -204,7 +217,7 @@ function sendDrawingMessage(imageData) {
     Data: {
       imagedata: imageData,
       amend: {
-        x: amend_x+20,
+        x: amend_x,
         y: amend_y
       }
     }
