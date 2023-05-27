@@ -2,7 +2,7 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118.3/build/three.m
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.3/examples/jsm/controls/TransformControls.js';
 import { isMark } from "./mark.js"
-import { divElement,remoteVideo } from "./video connection.js";
+import { divElement, remoteVideo } from "./video connection.js";
 import { drawCanvas } from "./drawing manager.js";
 import { selectedColor } from "./color manager.js";
 
@@ -10,6 +10,7 @@ import { selectedColor } from "./color manager.js";
 
 // 定义场景、相机、渲染器、模型控制器、动画和时间
 let scene, camera, renderer, controls, mixer, clock;
+
 
 // 定义模型和模型所在的画布
 export var model, modelCanvas;
@@ -40,15 +41,15 @@ export function initModelCanvas() {
         // 将 renderer 的 canvas 添加到 video 元素下，使其与 video 元素重叠
         modelCanvas = renderer.domElement;
         divElement.appendChild(modelCanvas);
+        modelCanvas.id = "model-canvas";
         // 设置渲染器的大小为 video 元素的大小
         let rect = remoteVideo.getBoundingClientRect();
         renderer.setSize(rect.width, rect.height);
-        modelCanvas.id = "model-canvas";
         // 将渲染器位置和远端视频位置重合
         // 获取 remoteVideo 的位置信息
         modelCanvas.style.position = "absolute";
         // 设置 videoElement 的 CSS 样式
-        modelCanvas.style.zIndex = '1'; 
+        modelCanvas.style.zIndex = '1';
         modelCanvas.style.top = '0';
         modelCanvas.style.left = '0';
     }
@@ -68,18 +69,22 @@ export function initMarking() {
     modelCanvas.addEventListener("mouseleave", onMouseEvent);
 }
 
-export function loadModel(event, [x, y]) {
+export function loadModel(event, [x, y], modelType) {
     if (model) return console.log('已有模型');
     //阻止默认的鼠标点击事件
     event.preventDefault();
 
     // 添加 GLTFLoader 以加载模型
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load("3d model/顺时针.gltf", function (gltf) {
+    gltfLoader.load(modelType, function (gltf) {
         model = gltf.scene;
 
         // 设置模型的位置
         model.position.copy(setModelPosition([x, y]));
+
+        // 设置模型的大小
+        model.scale.set(0.02, 0.02, 0.02);
+        model.rotation.set(Math.PI / 2, 0, 0);
 
         // 设置模型的颜色
         model.traverse((o) => {
@@ -107,6 +112,53 @@ export function loadModel(event, [x, y]) {
         scene.add(controls);
         scene.add(model);
         console.log("成功生成模型！");
+
+    }, undefined, function (error) {
+        console.error(error);
+    });
+}
+
+export function refreshModel(modelType) {
+    if (!model) return;
+
+    // 添加 GLTFLoader 以加载模型
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(modelType, function (gltf) {
+        let newModel = gltf.scene;
+
+        // 设置模型的位置
+        newModel.position.copy(model.position);
+        newModel.scale.copy(model.scale);
+        newModel.rotation.set(model.rotation.x, model.rotation.y, model.rotation.z);
+
+        // 设置模型的颜色
+        newModel.traverse((o) => {
+            if (o.isMesh) {
+                o.material.color.setStyle(selectedColor);
+            }
+        });
+
+        // 播放动画
+        mixer = new THREE.AnimationMixer(newModel);
+        const clips = gltf.animations;
+        mixer.clipAction(clips[0]).play();
+        removeModel()
+
+        // 创建 TransformControls 对象
+        controls = new TransformControls(camera, modelCanvas);
+        // controls.domElement.style.transform = 'scale(0.5)';
+        // 为模型添加控制器
+        controls.attach(newModel);
+        controls.setMode('rotate');
+        modelCanvas.addEventListener("mousedown", onMouseEvent);
+        modelCanvas.addEventListener("wheel", onMouseEvent);
+        modelCanvas.addEventListener("contextmenu", onMouseEvent);
+
+        // 将 controls 添加到场景中
+        scene.add(controls);
+        scene.add(newModel);
+        model=newModel;
+        console.log("成功刷新模型！");
 
     }, undefined, function (error) {
         console.error(error);

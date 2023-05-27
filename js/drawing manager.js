@@ -10,7 +10,7 @@ let drawing, previewCanvas, rect;
 
 export function initDrawingCanvas() {
     // 创建用于 draw 的 canvas
-    if(!drawCanvas){
+    if (!drawCanvas) {
         drawCanvas = document.createElement('canvas');
         drawCanvas.id = "draw-canvas";
         // 将 drawCanvas 添加到 video 元素下，使其与 video 元素重叠
@@ -19,30 +19,30 @@ export function initDrawingCanvas() {
         rect = remoteVideo.getBoundingClientRect();
         drawCanvas.width = rect.width;
         drawCanvas.height = rect.height;
-// 获取 remoteVideo 的位置信息,并于之重合
+        // 获取 remoteVideo 的位置信息,并于之重合
         drawCanvas.style.position = "absolute";
-        drawCanvas.style.zIndex = '1'; 
+        drawCanvas.style.zIndex = '1';
         drawCanvas.style.top = '0';
         drawCanvas.style.left = '0';
         drawCanvas.style.pointerEvents = 'none';
     }
 
-    if(!previewCanvas){
-    // 创建用于预览的 canvas
-    previewCanvas = document.createElement('canvas');
-    previewCanvas.id = "preview-canvas";
-    // 将 previewCanvas 添加到 drawCanvas 元素下，使其与 drawCanvas 元素重叠
-    divElement.appendChild(previewCanvas);
-    // 设置 previewCanvas 的大小为 drawCanvas 元素的大小
-    rect = remoteVideo.getBoundingClientRect();
-    previewCanvas.width = rect.width;
-    previewCanvas.height = rect.height;
-    // 获取 remoteVideo 的位置信息,并于之重合
-    previewCanvas.style.position = "absolute";
-    previewCanvas.style.zIndex = '1'; 
-    previewCanvas.style.top = '0';
-    previewCanvas.style.left = '0';
-    previewCanvas.style.pointerEvents = 'none';
+    if (!previewCanvas) {
+        // 创建用于预览的 canvas
+        previewCanvas = document.createElement('canvas');
+        previewCanvas.id = "preview-canvas";
+        // 将 previewCanvas 添加到 drawCanvas 元素下，使其与 drawCanvas 元素重叠
+        divElement.appendChild(previewCanvas);
+        // 设置 previewCanvas 的大小为 drawCanvas 元素的大小
+        rect = remoteVideo.getBoundingClientRect();
+        previewCanvas.width = rect.width;
+        previewCanvas.height = rect.height;
+        // 获取 remoteVideo 的位置信息,并于之重合
+        previewCanvas.style.position = "absolute";
+        previewCanvas.style.zIndex = '1';
+        previewCanvas.style.top = '0';
+        previewCanvas.style.left = '0';
+        previewCanvas.style.pointerEvents = 'none';
     }
 
 }
@@ -88,12 +88,12 @@ function startDrawing(event) {
     console.log("成功点击drawCanvas")
     drawing = true;
     brush.beginPath();
-    brush.moveTo(event.clientX - drawCanvas.offsetLeft, event.clientY - drawCanvas.offsetTop);
+    brush.moveTo(event.clientX - drawCanvas.getBoundingClientRect().left, event.clientY - drawCanvas.getBoundingClientRect().top);
 }
 
 function inDrawing(event) {
     if (!drawing) return;
-    brush.lineTo(event.clientX - drawCanvas.offsetLeft, event.clientY - drawCanvas.offsetTop);
+    brush.lineTo(event.clientX - drawCanvas.getBoundingClientRect().left, event.clientY - drawCanvas.getBoundingClientRect().top);
     brush.stroke();
 }
 
@@ -123,7 +123,7 @@ function showPreview(event) {
 
     // 在当前鼠标位置画上新的预览点
     previewBrush.beginPath();
-    previewBrush.arc(event.clientX - previewCanvas.offsetLeft, event.clientY - previewCanvas.offsetTop, brush.lineWidth / 2, 0, 2 * Math.PI);
+    previewBrush.arc(event.clientX - previewCanvas.getBoundingClientRect().left, event.clientY - previewCanvas.getBoundingClientRect().top, brush.lineWidth / 2, 0, 2 * Math.PI);
     previewBrush.fill();
 }
 

@@ -1,5 +1,5 @@
 import { sendMessage, MessageType, refresh } from "./video connection.js";
-import { initModelCanvas, modelCanvas, initMarking, loadModel, removeModel, getModelData } from "./model manager.js";
+import { initModelCanvas, modelCanvas, initMarking, loadModel,refreshModel, removeModel, getModelData } from "./model manager.js";
 import { initDrawingCanvas, initDrawing, closeDrawing, getDrawingData } from "./drawing manager.js";
 
 var btnMark = document.getElementById('mark');
@@ -13,12 +13,60 @@ var btnCancel = document.getElementById('cancel');
 export let isMark = false;
 export let isDraw = false;
 
+const markTypeArray=["静态标记.gltf","拧动标记1.gltf","拧动标记2.gltf","拉动标记1.gltf","拉动标记2.gltf","转动标记1.gltf","转动标记2.gltf","掰动标记1.gltf","掰动标记2.gltf",];
+
+let modelTypeIndex=0;
+let modelType="3d model/"+markTypeArray[modelTypeIndex];
+isMark = true;
+
+document.getElementById('mark1').addEventListener('click', function() {
+  modelTypeIndex=0
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+});
+
+document.getElementById('mark2').addEventListener('click', function() {
+  modelTypeIndex=1;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+});
+
+document.getElementById('mark3').addEventListener('click', function() {
+  modelTypeIndex=3;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+});
+
+document.getElementById('mark4').addEventListener('click', function() {
+  modelTypeIndex=5;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+});
+
+document.getElementById('mark5').addEventListener('click', function() {
+  modelTypeIndex=7;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+});
+
+document.getElementById('transform1').addEventListener('click', function() {
+  if(modelTypeIndex!==0){
+    modelTypeIndex++;
+    refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  }
+
+});
+
+document.getElementById('transform2').addEventListener('click', function() {
+  if(modelTypeIndex!==0){
+    modelTypeIndex--;
+    refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  }
+});
+
+
 // let amend_x = 65.49;
 // let amend_y = 116.94;
 let amend_x = 0;
 let amend_y = 0;
 
 //Mark按钮的点击事件
+//点击Mark再点击具体要Mark的种类
 btnMark.addEventListener("click", function () {
   isMark = true;
   isDraw = false;
@@ -102,30 +150,13 @@ btnCancel.addEventListener("click", function () {
 //   closeDrawing();
 // });
 
-document.body.addEventListener('click', function (event) {
-  if (event.target.id === 'connserver') {
-    console.log("点击connserver");
-    // 初始化 Three.js 场景,同时加载 mark 所需的 Canvas
-    initDrawingCanvas();
-    initModelCanvas();
-    // refresh();
-    // 在这里处理 canvas 的点击事件
-    modelCanvas.addEventListener("click", function (event) {
-      if (isMark) {
-        // 获取屏幕点击信息
-        let rect = modelCanvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-
-        //加载模型
-        loadModel(event, [x, y], isMark);
-      }
-      if (isDraw) {
-
-      }
-    });
-  }
-});
+// document.body.addEventListener('click', function (event) {
+//   if (event.target.id === 'connserver') {
+//     console.log("点击connserver");
+    
+//     });
+//   }
+// });
 
 
 function sendMarkingMessage(modelData) {
@@ -136,6 +167,7 @@ function sendMarkingMessage(modelData) {
   var message = {
     MessageType: MessageType.Model,
     Data: {
+      type:modelTypeIndex,
       position: {
         x: position.x + amend_x,
         y: position.y + amend_y
@@ -169,3 +201,21 @@ function sendDrawingMessage(imageData) {
   sendMessage(message);
 }
 
+// 初始化 Three.js 场景,同时加载 mark 所需的 Canvas
+initDrawingCanvas();
+initModelCanvas();
+// refresh();
+// 在这里处理 canvas 的点击事件
+modelCanvas.addEventListener("click", function (event) {
+  if (isMark) {
+    // 获取屏幕点击信息
+    let rect = modelCanvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
+    //加载模型
+    loadModel(event, [x, y], modelType);
+  }
+  if (isDraw) {
+
+  }});
