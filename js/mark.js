@@ -16,44 +16,55 @@ export let isDraw = false;
 const markTypeArray=["静态标记.gltf","拧动标记1.gltf","拧动标记2.gltf","拉动标记1.gltf","拉动标记2.gltf","转动标记1.gltf","转动标记2.gltf","掰动标记1.gltf","掰动标记2.gltf",];
 
 let modelTypeIndex=0;
-let modelType="3d model/"+markTypeArray[modelTypeIndex];
-isMark = true;
 
 document.getElementById('mark1').addEventListener('click', function() {
+  isMark = true;
   modelTypeIndex=0
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark2').addEventListener('click', function() {
+  isMark = true;
   modelTypeIndex=1;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark3').addEventListener('click', function() {
+  isMark = true;
   modelTypeIndex=3;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark4').addEventListener('click', function() {
+  isMark = true;
   modelTypeIndex=5;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark5').addEventListener('click', function() {
+  isMark = true;
   modelTypeIndex=7;
   refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('transform1').addEventListener('click', function() {
-  if(modelTypeIndex!==0){
+  if(modelTypeIndex!==0 && modelTypeIndex % 2 !== 0){
     modelTypeIndex++;
+    refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  }
+  else if(modelTypeIndex!==0 && modelTypeIndex % 2 === 0){
+    modelTypeIndex--;
     refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
   }
 
 });
 
 document.getElementById('transform2').addEventListener('click', function() {
-  if(modelTypeIndex!==0){
+  if(modelTypeIndex!==0 && modelTypeIndex % 2 !== 0){
+    modelTypeIndex++;
+    refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  }
+  else if(modelTypeIndex!==0 && modelTypeIndex % 2 === 0){
     modelTypeIndex--;
     refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
   }
@@ -71,7 +82,7 @@ btnMark.addEventListener("click", function () {
   isMark = true;
   isDraw = false;
   initMarking(isMark);
-
+  modelTypeIndex=0;
   // 发送-1给远程端，要求暂停画面
   sendMarkingMessage(getModelData(true));
 });
@@ -214,7 +225,7 @@ modelCanvas.addEventListener("click", function (event) {
     var y = event.clientY - rect.top;
 
     //加载模型
-    loadModel(event, [x, y], modelType);
+    loadModel(event, [x, y], "3d model/"+markTypeArray[modelTypeIndex]);
   }
   if (isDraw) {
 
