@@ -19,43 +19,53 @@ const markTypeArray=["静态标记.gltf","拧动标记1.gltf","拧动标记2.glt
 let modelTypeIndex=0;
 
 document.getElementById('mark1').addEventListener('click', function() {
-  isMark = true;
-  modelTypeIndex=0
-  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  if (isMark === false) {
+    isMark = true;
     // 发送-1给远程端，要求暂停画面
     sendMarkingMessage(getModelData(true));
+  }
+  modelTypeIndex=0
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark2').addEventListener('click', function() {
-  isMark = true;
-  modelTypeIndex=1;
-  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  if (isMark === false) {
+    isMark = true;
     // 发送-1给远程端，要求暂停画面
     sendMarkingMessage(getModelData(true));
+  }
+  modelTypeIndex=1;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark3').addEventListener('click', function() {
-  isMark = true;
-  modelTypeIndex=3;
-  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  if (isMark === false) {
+    isMark = true;
     // 发送-1给远程端，要求暂停画面
     sendMarkingMessage(getModelData(true));
+  }
+  modelTypeIndex=3;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark4').addEventListener('click', function() {
-  isMark = true;
-  modelTypeIndex=5;
-  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  if (isMark === false) {
+    isMark = true;
     // 发送-1给远程端，要求暂停画面
     sendMarkingMessage(getModelData(true));
+  }
+  modelTypeIndex=5;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('mark5').addEventListener('click', function() {
-  isMark = true;
-  modelTypeIndex=7;
-  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
+  if (isMark === false) {
+    isMark = true;
     // 发送-1给远程端，要求暂停画面
     sendMarkingMessage(getModelData(true));
+  }
+  modelTypeIndex=7;
+  refreshModel("3d model/"+markTypeArray[modelTypeIndex]);
 });
 
 document.getElementById('transform1').addEventListener('click', function() {
@@ -82,10 +92,10 @@ document.getElementById('transform2').addEventListener('click', function() {
 });
 
 
-// let amend_x = 65.49;
-// let amend_y = 116.94;
-let amend_x = 0;
-let amend_y = 0;
+let amend_x = 50;
+let amend_y = 80;
+// let amend_x = 20;
+// let amend_y =80;
 
 //Mark按钮的点击事件
 //点击Mark再点击具体要Mark的种类
@@ -193,8 +203,12 @@ function sendMarkingMessage(modelData) {
       type:modelTypeIndex,
       color:selectedColor,
       position: {
-        x: position.x + amend_x,
-        y: position.y + amend_y
+        x: position.x,
+        y: position.y
+      },
+      amend: {
+        x: amend_x,
+        y: amend_y
       },
       scale: {
         x: scale.x,

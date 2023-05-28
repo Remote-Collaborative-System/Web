@@ -9,7 +9,7 @@ import { selectedColor } from "./color manager.js";
 // var remoteVideo = localVideo
 
 // 定义场景、相机、渲染器、模型控制器、动画和时间
-let scene, camera, renderer, controls, mixer, clock,cameraFov=60;
+let scene, camera, renderer, controls, mixer, clock,cameraFov=42.56;
 
 
 // 定义模型和模型所在的画布
