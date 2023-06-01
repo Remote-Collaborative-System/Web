@@ -8,7 +8,7 @@
   <meta content="Aerolink - 远程协作系统" property="og:title" />
   <meta content="Aerolink - 远程协作系统" property="twitter:title" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <link href="https://uploads-ssl.webflow.com/6455c00736a22931a527a81f/css/remote-assist-site.webflow.3345ad3e1.css"
+  <link href="https://uploads-ssl.webflow.com/6455c00736a22931a527a81f/css/remote-assist-site.webflow.ac54b4ab8.css"
 
     rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -321,8 +321,7 @@
             <video id="remote-video" autoplay="" class="remotevideo w-video w-embed">
               <source
                         src="https://192.168.3.65/api/holographic/stream/live_high.mp4?holo=true&amp;pv=true&amp;mic=true&amp;loopback=true&amp;RenderFromCamera=true"
-                        type="video/mp4"
-                        >
+                        type="video/mp4">
             </video>
             <div class="div-block-5">
               <video id="local-video" autoplay="" class="localvideo w-video w-embed"></video>
@@ -438,6 +437,8 @@
   <script type="module" src="js/drawing manager.js"></script>
   <script type="module" src="js/color manager.js"></script>
   <script type="module" src="js/operation manager.js"></script>
+  <script> $(document).ready(function () { $(".w-webflow-badge").removeClass("w-webflow-badge").empty(); });
+  </script>
 </body>
 
 </html>
